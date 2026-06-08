@@ -1,0 +1,43 @@
+name: Build Windows Executable
+
+# Spustí sa, keď odošleš zmeny do vetvy 'main'
+on:
+  push:
+    branches: [ "main" ]
+  # Umožní ti spustiť zostavenie aj ručne z webového rozhrania GitHubu
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Hovoríme GitHubu, nech použije najnovšie prostredie Windows
+    runs-on: windows-latest
+
+    steps:
+      # 1. Stiahne tvoj kód z repozitára
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Nainštaluje Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Môžeš zvoliť aj 3.10 alebo 3.12
+
+      # 3. Nainštaluje potrebné knižnice (pyautogui a pyinstaller)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyautogui pyinstaller
+
+      # 4. Spustí PyInstaller a vytvorí .exe súbor
+      - name: Build with PyInstaller
+        run: |
+          # DÔLEŽITÉ: Nahraď 'tvoj_subor.py' skutočným názvom tvojho Python súboru
+          pyinstaller --onefile --windowed --name CountdownClicker tvoj_subor.py
+
+      # 5. Nahraje vytvorený .exe súbor ako "artefact", ktorý si môžeš stiahnuť
+      - name: Upload executable as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CountdownClicker-windows
+          path: dist/CountdownClicker.exe
