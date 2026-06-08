@@ -33,7 +33,7 @@ jobs:
       - name: Build with PyInstaller
         run: |
           # DÔLEŽITÉ: Nahraď 'tvoj_subor.py' skutočným názvom tvojho Python súboru
-          pyinstaller --onefile --windowed --name CountdownClicker tvoj_subor.py
+          pyinstaller --onefile --windowed --name CountdownClicker countdown.py
 
       # 5. Nahraje vytvorený .exe súbor ako "artefact", ktorý si môžeš stiahnuť
       - name: Upload executable as artifact
