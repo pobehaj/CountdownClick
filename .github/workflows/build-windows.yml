@@ -3,7 +3,7 @@ name: Build Windows Executable
 # Spustí sa, keď odošleš zmeny do vetvy 'main'
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feet" ]
   # Umožní ti spustiť zostavenie aj ručne z webového rozhrania GitHubu
   workflow_dispatch:
 
