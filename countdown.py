@@ -4,15 +4,13 @@ import pyautogui
 class Countdown:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.overrideredirect(True)          # Bez okrajov
-        self.root.attributes('-topmost', True)    # Vždy na vrchu
-        self.root.attributes('-alpha', 0.9)       # Mierne priehľadné
+        self.root.overrideredirect(True)
+        self.root.attributes('-topmost', True)
+        self.root.attributes('-alpha', 0.9)
 
-        # Získanie rozlíšenia obrazovky
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
 
-        # Veľkosť okna = 70 % rozlíšenia
         width = int(screen_width * 0.7)
         height = int(screen_height * 0.7)
         x = (screen_width - width) // 2
@@ -20,44 +18,40 @@ class Countdown:
 
         self.root.geometry(f"{width}x{height}+{x}+{y}")
 
-        # ----- Vytvorenie rozloženia -----
+        # Hlavný rám (čierne pozadie)
         main_frame = tk.Frame(self.root, bg="black")
         main_frame.pack(expand=True, fill=tk.BOTH)
 
-        # Ľavá časť (centrovaný countdown)
-        left_frame = tk.Frame(main_frame, bg="black")
-        left_frame.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-
-        # Pravá časť (ikona stopy)
-        right_frame = tk.Frame(main_frame, bg="black", width=100)
-        right_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=20)
-        right_frame.pack_propagate(False)   # zachovať šírku 100 px
-
-        # Center frame pre hlavný label a malý label (odpočet dole)
-        center_frame = tk.Frame(left_frame, bg="black")
+        # Centrovaný obsah (vertikálne aj horizontálne)
+        center_frame = tk.Frame(main_frame, bg="black")
         center_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        # Veľkosť písma – prispôsobí sa menšiemu rozmeru okna
-        font_size = min(width, height) // 4
-        self.main_label = tk.Label(center_frame, text="", font=("Arial", font_size, "bold"),
+        # Malý text odpočtu (NAD veľkým číslom) - zmenšený a tmavší
+        font_size_small = min(width, height) // 32   # ešte menšie ako predtým
+        self.small_label = tk.Label(center_frame, text="", font=("Arial", font_size_small),
+                                    bg="black", fg="#333333")   # tmavosivá (takmer čierna)
+        self.small_label.pack(pady=(0, 10))
+
+        # Veľké číslo
+        big_font = min(width, height) // 4
+        self.main_label = tk.Label(center_frame, text="", font=("Arial", big_font, "bold"),
                                    bg="black", fg="white")
         self.main_label.pack()
 
-        # Malý text pod hlavným číslom (zobrazuje zostávajúce sekundy)
-        small_font = max(12, font_size // 4)
-        self.small_label = tk.Label(center_frame, text="", font=("Arial", small_font),
-                                    bg="black", fg="gray")
-        self.small_label.pack(pady=20)
+        # Spodný rám pre nohy (úplne dole)
+        bottom_frame = tk.Frame(main_frame, bg="black", height=80)
+        bottom_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
+        bottom_frame.pack_propagate(False)
 
-        # Jedna ikona stopy na pravej strane (👣 - dve chodidlá)
-        foot_font = max(30, font_size // 2)
-        self.foot = tk.Label(right_frame, text="👣", font=("Arial", foot_font),
-                             bg="black", fg="white")
-        self.foot.pack(expand=True)
+        # Dve nohy na spodnom riadku, zarovnané ÚPLNE VPRAVO
+        foot_font = max(30, min(width, height) // 10)
+        self.foot_label = tk.Label(bottom_frame, text=">>👣", font=("Arial", foot_font),
+                                   bg="black", fg="white")
+        self.foot_label.pack(side=tk.RIGHT, padx=20)   # RIGHT + malý odstup od okraja
 
-        self.count = 3   # ZMENENÉ z 5 na 3 sekundy
+        self.count = 3
         self.update_countdown()
-        self.root.after(4000, self.finish)   # 3 sekundy odpočet + 0.5s GO = cca 3.5s, rezerva 4s
+        self.root.after(4000, self.finish)
 
     def update_countdown(self):
         if self.count > 0:
@@ -72,10 +66,9 @@ class Countdown:
 
     def click_and_exit(self):
         self.root.destroy()
-        pyautogui.click()   # Ľavý klik na aktuálnej pozícii kurzora
+        pyautogui.click()
 
     def finish(self):
-        # Bezpečnostné ukončenie
         try:
             self.root.destroy()
             pyautogui.click()
